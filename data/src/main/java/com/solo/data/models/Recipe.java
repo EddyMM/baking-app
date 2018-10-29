@@ -4,9 +4,11 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Recipe {
+public class Recipe implements Serializable {
+    // TODO: Use parcelable instead of serializable
 
     @SerializedName("id")
     private int id;

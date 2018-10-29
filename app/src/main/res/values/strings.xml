@@ -2,4 +2,10 @@
     <string name="app_name">Baking App</string>
     <string name="recipe_item_servings">Serves: %d</string>
     <string name="recipe_item_image_description">recipe image</string>
+    <string name="ingredient_quantity">Quantity: %s %s</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="steps">Steps</string>
+    <string name="step_item_label">Step %s: %s</string>
+    <string name="ingredient_item_name">%d. %s</string>
+    <string name="step_icon_description">step icon</string>
 </resources>

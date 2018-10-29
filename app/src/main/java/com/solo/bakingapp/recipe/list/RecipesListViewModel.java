@@ -1,4 +1,4 @@
-package com.solo.bakingapp.recipe;
+package com.solo.bakingapp.recipe.list;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -27,7 +27,7 @@ public class RecipesListViewModel extends AndroidViewModel {
         fetchRecipes();
     }
 
-    LiveData<List<Recipe>> getRecipesLiveData() {
+    public LiveData<List<Recipe>> getRecipesLiveData() {
         return recipesLiveData;
     }
 

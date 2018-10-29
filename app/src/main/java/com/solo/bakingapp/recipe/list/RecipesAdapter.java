@@ -1,6 +1,7 @@
-package com.solo.bakingapp.recipe;
+package com.solo.bakingapp.recipe.list;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.solo.bakingapp.R;
+import com.solo.bakingapp.recipe.detail.RecipeDetailActivity;
 import com.solo.data.models.Recipe;
 import com.squareup.picasso.Picasso;
 
@@ -19,16 +21,16 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesListViewHolder> {
+public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesListViewHolder> {
 
     private Context context;
     private List<Recipe> recipes;
 
-    RecipesAdapter(Context context) {
+    public RecipesAdapter(Context context) {
         this.context = context;
     }
 
-    void setRecipes(List<Recipe> recipes) {
+    public void setRecipes(List<Recipe> recipes) {
         this.recipes = recipes;
         notifyDataSetChanged();
     }
@@ -50,13 +52,14 @@ class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesListView
         return recipes != null ? recipes.size() : 0;
     }
 
-    class RecipesListViewHolder extends RecyclerView.ViewHolder {
+    class RecipesListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.recipeItemNameTextView) TextView recipeNameTextView;
         @BindView(R.id.recipeItemServingsTextView) TextView servingsTextView;
         @BindView(R.id.recipeItemImageView) ImageView recipeItemImageView;
 
         RecipesListViewHolder(@NonNull View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
         }
 
         void bind(@NonNull Recipe recipe) {
@@ -72,6 +75,16 @@ class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesListView
                         .error(R.drawable.ic_baker)
                         .into(recipeItemImageView);
             }
+        }
+
+        @Override
+        public void onClick(View view) {
+            Recipe recipe = recipes.get(getAdapterPosition());
+
+            Intent intent = new Intent(context, RecipeDetailActivity.class);
+            intent.putExtra(RecipeDetailActivity.EXTRA_RECIPE, recipe);
+
+            context.startActivity(intent);
         }
     }
 }

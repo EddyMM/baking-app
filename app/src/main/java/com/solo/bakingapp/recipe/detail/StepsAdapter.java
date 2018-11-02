@@ -43,7 +43,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
 
     @Override
     public void onBindViewHolder(@NonNull StepsViewHolder stepsViewHolder, int position) {
-        stepsViewHolder.bind(steps.get(position), position + 1);
+        stepsViewHolder.bind(steps.get(position), position);
     }
 
     @Override

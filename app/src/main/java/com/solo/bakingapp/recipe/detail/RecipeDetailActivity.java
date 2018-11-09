@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.solo.bakingapp.R;
+import com.solo.bakingapp.step.StepDetailFragment;
 import com.solo.data.models.Recipe;
 
 
@@ -31,17 +32,32 @@ public class RecipeDetailActivity extends AppCompatActivity {
             if (recipe != null) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
-                Fragment fragment = fragmentManager
+                Fragment recipeDetailFragment = fragmentManager
                         .findFragmentById(R.id.recipe_details_fragment_container);
 
-                // Create fragment if it doesn't already exist
-                if (fragment == null) {
+                // Create recipe fragment if it doesn't already exist
+                if (recipeDetailFragment == null) {
                     fragmentManager.beginTransaction()
                             .add(R.id.recipe_details_fragment_container,
                                     RecipeDetailFragment.getInstance(recipe))
                             .commit();
 
                     setTitle(recipe.getName());
+                }
+
+                if (getResources().getBoolean(R.bool.is_tablet)) {
+                    Fragment stepFragment = fragmentManager
+                            .findFragmentById(R.id.step_fragment_container);
+
+                    // Create step fragment if it doesn't already exist
+                    if (stepFragment == null) {
+                        fragmentManager.beginTransaction()
+                                .add(R.id.step_fragment_container,
+                                        StepDetailFragment.getInstance(recipe.getSteps().get(0)))
+                                .commit();
+
+                        setTitle(recipe.getName());
+                    }
                 }
             }
         }

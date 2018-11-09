@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -53,6 +54,12 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     @BindView(R.id.step_video_view)
     PlayerView exoPlayerView;
 
+    @BindView(R.id.swipe_left_image_view)
+    ImageView swipeLeftImageView;
+
+    @BindView(R.id.swipe_right_image_view)
+    ImageView swipeRightImageView;
+
     public static StepDetailFragment getInstance(Step step) {
         StepDetailFragment stepDetailFragment = new StepDetailFragment();
 
@@ -81,10 +88,15 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
 
         ButterKnife.bind(this, v);
 
+        initUI();
+
+        return v;
+    }
+
+    private void initUI() {
         if (step != null) {
             if (TextUtils.isEmpty(step.getVideoUrl())) {
-                exoPlayerView.setDefaultArtwork(
-                        requireContext().getResources().getDrawable(R.drawable.ic_baker));
+                exoPlayerView.setVisibility(View.GONE);
             } else {
                 exoPlayerView.setDefaultArtwork(
                         requireContext().getResources().getDrawable(R.drawable.exo_icon_play));
@@ -94,8 +106,6 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
             }
             stepTextView.setText(step.getDescription());
         }
-
-        return v;
     }
 
     private void initialiseMediaSession() {
@@ -115,11 +125,6 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
 
         mediaSession.setCallback(new StepSessionCallback());
         mediaSession.setActive(true);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     @Override

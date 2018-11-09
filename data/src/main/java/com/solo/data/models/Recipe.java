@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Recipe implements Serializable {
@@ -20,7 +21,7 @@ public class Recipe implements Serializable {
     private List<Ingredient> ingredients;
 
     @SerializedName("steps")
-    private List<Step> steps;
+    private ArrayList<Step> steps;
 
     @SerializedName("servings")
     private int servings;
@@ -42,7 +43,7 @@ public class Recipe implements Serializable {
         return ingredients;
     }
 
-    public List<Step> getSteps() {
+    public ArrayList<Step> getSteps() {
         return steps;
     }
 

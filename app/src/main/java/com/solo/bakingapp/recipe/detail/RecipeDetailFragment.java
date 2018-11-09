@@ -1,10 +1,12 @@
 package com.solo.bakingapp.recipe.detail;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,13 +15,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.solo.bakingapp.R;
+import com.solo.bakingapp.step.StepActivity;
+import com.solo.bakingapp.step.StepDetailFragment;
 import com.solo.data.models.Recipe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 
-public class RecipeDetailFragment extends Fragment {
+public class RecipeDetailFragment extends Fragment implements StepsAdapter.StepListener {
     private static final String RECIPE_ARG = "recipe_arg";
 
     @BindView(R.id.ingredients_recycler_view)
@@ -62,7 +67,6 @@ public class RecipeDetailFragment extends Fragment {
         DividerItemDecoration ingredientsDividerItemDecoration =
                 getDividerItemDecoration(ingredientsLinearLayoutManager);
 
-        // TODO: Use a list view instead
         ingredientsRecyclerView.setLayoutManager(ingredientsLinearLayoutManager);
         ingredientsRecyclerView.setAdapter(new IngredientsAdapter(requireContext(), recipe.getIngredients()));
         ingredientsRecyclerView.addItemDecoration(ingredientsDividerItemDecoration);
@@ -75,8 +79,8 @@ public class RecipeDetailFragment extends Fragment {
         stepsRecyclerView.setLayoutManager(stepsLinearLayoutManager);
         stepsRecyclerView.setAdapter(new StepsAdapter(
                 requireContext(),
-                recipe.getName(),
-                recipe.getSteps()));
+                recipe.getSteps(),
+                this));
         stepsRecyclerView.addItemDecoration(stepsDividerItemDecoration);
         stepsRecyclerView.setNestedScrollingEnabled(false);
 
@@ -91,5 +95,23 @@ public class RecipeDetailFragment extends Fragment {
     private DividerItemDecoration getDividerItemDecoration(LinearLayoutManager linearLayoutManager) {
         return new DividerItemDecoration(
                 requireContext(), linearLayoutManager.getOrientation());
+    }
+
+    @Override
+    public void onStepClick(int stepPosition) {
+        if (requireContext().getResources().getBoolean(R.bool.is_tablet)) {
+            // Load step into fragment
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+
+            StepDetailFragment stepFragment = StepDetailFragment.getInstance(recipe.getSteps().get(stepPosition));
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.step_fragment_container, stepFragment)
+                    .commit();
+        } else {
+            Intent intent = StepActivity.newIntent(requireContext(), stepPosition, recipe.getName());
+            StepsList.setList(recipe.getSteps());
+            requireContext().startActivity(intent);
+        }
     }
 }

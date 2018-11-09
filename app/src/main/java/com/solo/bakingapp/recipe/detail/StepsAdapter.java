@@ -1,7 +1,6 @@
 package com.solo.bakingapp.recipe.detail;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,25 +11,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.solo.bakingapp.R;
-import com.solo.bakingapp.step.StepActivity;
 import com.solo.data.models.Step;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHolder> {
 
-    private List<Step> steps;
+    private ArrayList<Step> steps;
     private Context context;
-    private String recipeName;
+    private StepListener stepListener;
 
-    StepsAdapter(@NonNull Context context, @NonNull String recipeName, @NonNull List<Step> steps) {
+    StepsAdapter(@NonNull Context context, @NonNull ArrayList<Step> steps, StepListener stepListener) {
         this.steps = steps;
         this.context = context;
-        this.recipeName = recipeName;
+        this.stepListener = stepListener;
+    }
+
+    interface StepListener {
+        void onStepClick(int stepPosition);
     }
 
     @NonNull
@@ -73,7 +75,6 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
             );
 
             if (!TextUtils.isEmpty(step.getThumbnailUrl())) {
-                // TODO: Load video thumbnails
                 Picasso.get()
                         .load(step.getThumbnailUrl())
                         .error(R.drawable.ic_mortar)
@@ -83,13 +84,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
 
         @Override
         public void onClick(View view) {
-            Step step = steps.get(getAdapterPosition());
-
-            Intent intent = new Intent(context, StepActivity.class);
-            intent.putExtra(StepActivity.STEP_EXTRA, step);
-            intent.putExtra(StepActivity.RECIPE_NAME_EXTRA, recipeName);
-
-            context.startActivity(intent);
+            stepListener.onStepClick(getAdapterPosition());
         }
     }
 }

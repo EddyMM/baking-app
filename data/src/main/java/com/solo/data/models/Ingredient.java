@@ -18,6 +18,12 @@ public class Ingredient implements Serializable {
     @SerializedName("ingredient")
     private String name;
 
+    public Ingredient(String name, float quantity, String measure) {
+        this.quantity = quantity;
+        this.measure = measure;
+        this.name = name;
+    }
+
     @NonNull
     @Override
     public String toString() {

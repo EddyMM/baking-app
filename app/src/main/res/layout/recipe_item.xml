@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/recipeItemNameTextView"
+            android:id="@+id/recipe_item_name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -21,25 +21,25 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textAlignment="textStart"
-            app:layout_constraintStart_toEndOf="@+id/recipeItemImageView"
+            app:layout_constraintStart_toEndOf="@+id/recipe_item_image_view"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Recipe Name"
             android:gravity="start" />
 
         <TextView
-            android:id="@+id/recipeItemServingsTextView"
+            android:id="@+id/recipe_item_servings_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="start"
             android:textAlignment="textStart"
             android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@+id/recipeItemNameTextView"
-            app:layout_constraintTop_toBottomOf="@+id/recipeItemNameTextView"
+            app:layout_constraintStart_toStartOf="@+id/recipe_item_name_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_item_name_text_view"
             tools:text="serves n" />
 
         <ImageView
-            android:id="@+id/recipeItemImageView"
+            android:id="@+id/recipe_item_image_view"
             android:layout_width="61dp"
             android:layout_height="56dp"
             android:layout_marginBottom="8dp"

@@ -21,7 +21,6 @@ import com.solo.data.models.Recipe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 
 public class RecipeDetailFragment extends Fragment implements StepsAdapter.StepListener {

@@ -1,7 +1,6 @@
-package com.solo.bakingapp.recipe.list;
+package com.solo.bakingapp.recipe.widget.config;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.solo.bakingapp.R;
-import com.solo.bakingapp.recipe.detail.RecipeDetailActivity;
+import com.solo.data.models.Ingredient;
 import com.solo.data.models.Recipe;
 import com.squareup.picasso.Picasso;
 
@@ -21,13 +20,17 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesListViewHolder> {
 
-    private Context context;
+public class RecipeSelectionAdapter extends RecyclerView.Adapter<RecipeSelectionAdapter.RecipeSelectionViewHolder> {
+
+    private final Context context;
     private List<Recipe> recipes;
 
-    RecipesAdapter(Context context) {
+    private RecipeSelectionListener recipeSelectionListener;
+
+    RecipeSelectionAdapter(Context context, RecipeSelectionListener recipeSelectionListener) {
         this.context = context;
+        this.recipeSelectionListener = recipeSelectionListener;
     }
 
     void setRecipes(List<Recipe> recipes) {
@@ -35,16 +38,21 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesL
         notifyDataSetChanged();
     }
 
+    interface RecipeSelectionListener {
+        void onRecipeSelected(List<Ingredient> ingredients);
+    }
+
     @NonNull
     @Override
-    public RecipesListViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(context).inflate(R.layout.recipe_item, viewGroup, false);
-        return new RecipesListViewHolder(v);
+    public RecipeSelectionViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View v = LayoutInflater.from(context)
+                .inflate(R.layout.recipe_item, viewGroup, false);
+        return new RecipeSelectionViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecipesListViewHolder recipesListViewHolder, int position) {
-        recipesListViewHolder.bind(recipes.get(position));
+    public void onBindViewHolder(@NonNull RecipeSelectionViewHolder recipeSelectionViewHolder, int i) {
+        recipeSelectionViewHolder.bind(recipes.get(i));
     }
 
     @Override
@@ -52,15 +60,15 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesL
         return recipes != null ? recipes.size() : 0;
     }
 
-    class RecipesListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class RecipeSelectionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.recipe_item_name_text_view)
         TextView recipeNameTextView;
-        @BindView(R.id.recipe_item_servings_text_view)
-        TextView servingsTextView;
         @BindView(R.id.recipe_item_image_view)
         ImageView recipeItemImageView;
+        @BindView(R.id.recipe_item_servings_text_view)
+        TextView servingsTextView;
 
-        RecipesListViewHolder(@NonNull View itemView) {
+        RecipeSelectionViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
         }
@@ -82,12 +90,8 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesL
 
         @Override
         public void onClick(View view) {
-            Recipe recipe = recipes.get(getAdapterPosition());
-
-            Intent intent = new Intent(context, RecipeDetailActivity.class);
-            intent.putExtra(RecipeDetailActivity.EXTRA_RECIPE, recipe);
-
-            context.startActivity(intent);
+            recipeSelectionListener.onRecipeSelected(
+                    recipes.get(getAdapterPosition()).getIngredients());
         }
     }
 }

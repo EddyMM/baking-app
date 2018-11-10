@@ -39,6 +39,8 @@ import com.solo.data.models.Step;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.view.View.GONE;
+
 public class StepDetailFragment extends Fragment implements Player.EventListener {
     private static final String STEP_ARG = "step_arg";
     private static final String MEDIA_SESSION_TAG = "MEDIA_SESSION";
@@ -96,7 +98,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     private void initUI() {
         if (step != null) {
             if (TextUtils.isEmpty(step.getVideoUrl())) {
-                exoPlayerView.setVisibility(View.GONE);
+                exoPlayerView.setVisibility(GONE);
             } else {
                 exoPlayerView.setDefaultArtwork(
                         requireContext().getResources().getDrawable(R.drawable.exo_icon_play));
@@ -105,6 +107,11 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
                 initialisePlayer(videoUri);
             }
             stepTextView.setText(step.getDescription());
+
+            if (requireContext().getResources().getBoolean(R.bool.is_tablet)) {
+                swipeLeftImageView.setVisibility(GONE);
+                swipeRightImageView.setVisibility(GONE);
+            }
         }
     }
 

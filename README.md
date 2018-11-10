@@ -1,7 +1,7 @@
 # Baking App
 
 An android application for Udacity resident chef to share recipes.
-APK can be found [here](https://github.com/EddyMM/movinfo-app/releases)
+APK can be found [here](https://github.com/EddyMM/baking-app/releases)
 
 <img src="githubAssets/imgs/recipe_list_screen.png" alt="Recipe List Screen" width=250 height=450 />  <img src="githubAssets/imgs/recipe_detail_ingredients_screen.png" alt="Recipe Details Ingredients screen" width=250 height=450 />
 <img src="githubAssets/imgs/recipe_detail_steps_screen.png" alt="Recipe Details Steps screen" width=250 height=450 />

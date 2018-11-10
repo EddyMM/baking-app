@@ -1,13 +1,12 @@
 package com.solo.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class Step implements Serializable {
-    // TODO: Use parcelable instead of serializable
+public class Step implements Parcelable {
 
     @SerializedName("id")
     private int id;
@@ -45,4 +44,39 @@ public class Step implements Serializable {
     public String getThumbnailUrl() {
         return thumbnailUrl;
     }
+
+    protected Step(Parcel in) {
+        id = in.readInt();
+        shortDescription = in.readString();
+        description = in.readString();
+        videoUrl = in.readString();
+        thumbnailUrl = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(shortDescription);
+        dest.writeString(description);
+        dest.writeString(videoUrl);
+        dest.writeString(thumbnailUrl);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Step> CREATOR = new Parcelable.Creator<Step>() {
+        @Override
+        public Step createFromParcel(Parcel in) {
+            return new Step(in);
+        }
+
+        @Override
+        public Step[] newArray(int size) {
+            return new Step[size];
+        }
+    };
 }

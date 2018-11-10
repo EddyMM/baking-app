@@ -27,7 +27,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private void initUI() {
         Intent intent = getIntent();
         if (intent.hasExtra(RecipeDetailActivity.EXTRA_RECIPE)) {
-            Recipe recipe = (Recipe) intent.getSerializableExtra(RecipeDetailActivity.EXTRA_RECIPE);
+            Recipe recipe = intent.getParcelableExtra(RecipeDetailActivity.EXTRA_RECIPE);
 
             if (recipe != null) {
                 FragmentManager fragmentManager = getSupportFragmentManager();

@@ -37,7 +37,7 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.StepL
 
     public static RecipeDetailFragment getInstance(Recipe recipe) {
         Bundle args = new Bundle();
-        args.putSerializable(RECIPE_ARG, recipe);
+        args.putParcelable(RECIPE_ARG, recipe);
 
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
         recipeDetailFragment.setArguments(args);
@@ -51,7 +51,7 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.StepL
 
         Bundle args = getArguments();
         if (args != null) {
-            recipe = (Recipe) args.getSerializable(RECIPE_ARG);
+            recipe = args.getParcelable(RECIPE_ARG);
         }
     }
 

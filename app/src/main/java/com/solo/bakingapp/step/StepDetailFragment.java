@@ -66,7 +66,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         StepDetailFragment stepDetailFragment = new StepDetailFragment();
 
         Bundle args = new Bundle();
-        args.putSerializable(STEP_ARG, step);
+        args.putParcelable(STEP_ARG, step);
 
         stepDetailFragment.setArguments(args);
 
@@ -79,7 +79,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
 
         Bundle args = getArguments();
         if (args != null) {
-            step = (Step) args.getSerializable(STEP_ARG);
+            step = args.getParcelable(STEP_ARG);
         }
     }
 

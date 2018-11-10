@@ -2,20 +2,58 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.solo.bakingapp">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".BakingApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RecipeListActivity">
+        <activity
+            android:name=".recipe.list.RecipeListActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".recipe.detail.RecipeDetailActivity"
+            android:launchMode="singleTask"
+            android:parentActivityName=".recipe.list.RecipeListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".recipe.list.RecipeListActivity" />
+        </activity>
+        <activity
+            android:name=".step.StepActivity"
+            android:launchMode="singleTask"
+            android:parentActivityName=".recipe.detail.RecipeDetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".recipe.detail.RecipeDetailActivity" />
+        </activity>
+
+        <receiver android:name=".recipe.widget.BakingAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/baking_app_widget_info" />
+        </receiver>
+
+        <activity android:name=".recipe.widget.config.BakingAppConfigActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

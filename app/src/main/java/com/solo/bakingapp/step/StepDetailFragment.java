@@ -135,8 +135,8 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
         releasePlayer();
         if (mediaSession != null) {
             mediaSession.setActive(false);

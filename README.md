@@ -5,7 +5,7 @@ APK can be found [here](https://github.com/EddyMM/movinfo-app/releases)
 
 <img src="githubAssets/imgs/recipe_list_screen.png" alt="Recipe List Screen" width=250 height=450 />  <img src="githubAssets/imgs/recipe_detail_ingredients_screen.png" alt="Recipe Details Ingredients screen" width=250 height=450 />
 <img src="githubAssets/imgs/recipe_detail_steps_screen.png" alt="Recipe Details Steps screen" width=250 height=450 />
-<img src="githubAssets/imgs/steps_screen.png" alt="Steps screen" width=250 height=450 />  <img src="githubAssets/imgs/select_recipe_for_widget_screen.png" alt="Select Recipe For Widget screen" width=250 height=450 />
+<img src="githubAssets/imgs/step_screen.png" alt="Steps screen" width=250 height=450 />  <img src="githubAssets/imgs/select_recipe_for_widget_screen.png" alt="Select Recipe For Widget screen" width=250 height=450 />
 <img src="githubAssets/imgs/widget_screen.png" alt="Widget screen" width=250 height=450 />
 
 ## Installation

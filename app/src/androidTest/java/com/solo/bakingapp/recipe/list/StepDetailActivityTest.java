@@ -72,7 +72,7 @@ public class StepDetailActivityTest {
 
         ViewInteraction viewGroup = onView(
                 allOf(childAtPosition(
-                        withParent(withId(R.id.activity_step_view_pager)),
+                        withParent(withId(R.id.activity_step_fragment_container)),
                         0),
                         isDisplayed()));
         viewGroup.check(matches(isDisplayed()));

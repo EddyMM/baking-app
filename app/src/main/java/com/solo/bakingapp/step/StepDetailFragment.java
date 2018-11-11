@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
@@ -34,7 +35,10 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.solo.bakingapp.Constants;
 import com.solo.bakingapp.R;
+import com.solo.bakingapp.recipe.detail.StepsList;
 import com.solo.data.models.Step;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,11 +48,15 @@ import static android.view.View.GONE;
 public class StepDetailFragment extends Fragment implements Player.EventListener {
     private static final String STEP_ARG = "step_arg";
     private static final String MEDIA_SESSION_TAG = "MEDIA_SESSION";
+    private static final String EXTRA_PLAYBACK_STATE = "playback_state";
+    private static final String EXTRA_CURRENT_POSITION = "current_position";
+    private static final String STEP_POSITION = "step_position";
 
     private ExoPlayer exoPlayer;
     private MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder playbackStateBuilder;
     private Step step;
+    private int position;
 
     @BindView(R.id.step_instruction_text_view)
     TextView stepTextView;
@@ -56,17 +64,18 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     @BindView(R.id.step_video_view)
     PlayerView exoPlayerView;
 
-    @BindView(R.id.swipe_left_image_view)
+    @BindView(R.id.move_left_image_view)
     ImageView swipeLeftImageView;
 
-    @BindView(R.id.swipe_right_image_view)
+    @BindView(R.id.move_right_image_view)
     ImageView swipeRightImageView;
 
-    public static StepDetailFragment getInstance(Step step) {
+    public static StepDetailFragment getInstance(Step step, int position) {
         StepDetailFragment stepDetailFragment = new StepDetailFragment();
 
         Bundle args = new Bundle();
         args.putParcelable(STEP_ARG, step);
+        args.putInt(STEP_POSITION, position);
 
         stepDetailFragment.setArguments(args);
 
@@ -80,6 +89,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         Bundle args = getArguments();
         if (args != null) {
             step = args.getParcelable(STEP_ARG);
+            position = args.getInt(STEP_POSITION);
         }
     }
 
@@ -93,6 +103,21 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         initUI();
 
         return v;
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            long currentPosition = savedInstanceState.getLong(EXTRA_CURRENT_POSITION);
+            int currentState = savedInstanceState.getInt(EXTRA_PLAYBACK_STATE);
+
+            if (playbackStateBuilder != null && exoPlayer != null) {
+                playbackStateBuilder.setState(currentState, currentPosition, 1f);
+                exoPlayer.seekTo(currentPosition);
+            }
+        }
     }
 
     private void initUI() {
@@ -112,6 +137,32 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
                 swipeLeftImageView.setVisibility(GONE);
                 swipeRightImageView.setVisibility(GONE);
             }
+
+            swipeLeftImageView.setOnClickListener((view) -> {
+                List<Step> steps = StepsList.getSteps();
+                if (position != 0) {
+                    int newPosition = position - 1;
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.activity_step_fragment_container,
+                                    StepDetailFragment.getInstance(
+                                            steps.get(newPosition), newPosition))
+                            .commit();
+                }
+            });
+
+            swipeRightImageView.setOnClickListener((view) -> {
+                List<Step> steps = StepsList.getSteps();
+                if (position != steps.size() - 1) {
+                    int newPosition = position + 1;
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.activity_step_fragment_container,
+                                    StepDetailFragment.getInstance(
+                                            steps.get(newPosition), newPosition))
+                            .commit();
+                }
+            });
         }
     }
 
@@ -128,6 +179,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
                         PlaybackStateCompat.ACTION_PAUSE |
                         PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
                         PlaybackStateCompat.ACTION_PLAY_PAUSE);
+
         mediaSession.setPlaybackState(playbackStateBuilder.build());
 
         mediaSession.setCallback(new StepSessionCallback());
@@ -135,12 +187,25 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         releasePlayer();
         if (mediaSession != null) {
             mediaSession.setActive(false);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (exoPlayer != null) {
+            long currentPosition = exoPlayer.getCurrentPosition();
+            int currentState = exoPlayer.getPlaybackState();
+
+            outState.putInt(EXTRA_PLAYBACK_STATE, currentState);
+            outState.putLong(EXTRA_CURRENT_POSITION, currentPosition);
+        }
+
+        super.onSaveInstanceState(outState);
     }
 
     private void initialisePlayer(Uri mediaUri) {

@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.solo.bakingapp.R;
@@ -16,16 +14,12 @@ import com.solo.data.models.Step;
 
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 public class StepActivity extends AppCompatActivity {
     public static final String RECIPE_NAME_EXTRA = "recipe_name_extra";
     public static final String STEP_EXTRA = "step_extra";
-
-    @BindView(R.id.activity_step_view_pager)
-    ViewPager stepsViewPager;
 
     public static Intent newIntent(Context context, int stepPosition, String recipeName) {
         Intent intent = new Intent(context, StepActivity.class);
@@ -50,20 +44,19 @@ public class StepActivity extends AppCompatActivity {
             int stepPosition = intent.getIntExtra(STEP_EXTRA, 0);
             List<Step> steps = StepsList.getSteps();
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            stepsViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
-                @Override
-                public Fragment getItem(int position) {
-                    return StepDetailFragment.getInstance(steps.get(position));
-                }
+            if (savedInstanceState == null) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                Fragment stepFragment = fragmentManager
+                        .findFragmentById(R.id.activity_step_fragment_container);
 
-                @Override
-                public int getCount() {
-                    return steps.size();
+                if (stepFragment == null) {
+                    stepFragment = StepDetailFragment
+                            .getInstance(steps.get(stepPosition), stepPosition);
+                    fragmentManager.beginTransaction()
+                            .add(R.id.activity_step_fragment_container, stepFragment)
+                            .commit();
                 }
-            });
-
-            stepsViewPager.setCurrentItem(stepPosition);
+            }
         }
     }
 

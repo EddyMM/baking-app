@@ -49,7 +49,7 @@ public class StepDetailActivityTest {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(700);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -65,14 +65,14 @@ public class StepDetailActivityTest {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(4989);
+            Thread.sleep(8000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         ViewInteraction viewGroup = onView(
                 allOf(childAtPosition(
-                        withParent(withId(R.id.activity_step_view_pager)),
+                        withParent(withId(R.id.activity_step_fragment_container)),
                         0),
                         isDisplayed()));
         viewGroup.check(matches(isDisplayed()));

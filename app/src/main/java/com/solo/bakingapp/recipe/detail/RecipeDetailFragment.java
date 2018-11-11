@@ -102,7 +102,8 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.StepL
             // Load step into fragment
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
 
-            StepDetailFragment stepFragment = StepDetailFragment.getInstance(recipe.getSteps().get(stepPosition));
+            StepDetailFragment stepFragment = StepDetailFragment
+                    .getInstance(recipe.getSteps().get(stepPosition), stepPosition);
 
             fragmentManager.beginTransaction()
                     .replace(R.id.step_fragment_container, stepFragment)

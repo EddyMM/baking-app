@@ -53,7 +53,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                     if (stepFragment == null) {
                         fragmentManager.beginTransaction()
                                 .add(R.id.step_fragment_container,
-                                        StepDetailFragment.getInstance(recipe.getSteps().get(0)))
+                                        StepDetailFragment.getInstance(recipe.getSteps().get(0), 0))
                                 .commit();
 
                         setTitle(recipe.getName());

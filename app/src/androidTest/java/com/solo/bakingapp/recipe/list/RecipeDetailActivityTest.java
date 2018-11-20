@@ -1,97 +1,115 @@
 package com.solo.bakingapp.recipe.list;
 
 
-import android.support.test.espresso.ViewInteraction;
+import android.content.Intent;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import com.solo.bakingapp.R;
+import com.solo.bakingapp.recipe.detail.RecipeDetailActivity;
+import com.solo.data.models.Ingredient;
+import com.solo.data.models.Recipe;
+import com.solo.data.models.Step;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class RecipeDetailActivityTest {
 
+    private Recipe testRecipe;
+
     @Rule
-    public ActivityTestRule<RecipeListActivity> mActivityTestRule = new ActivityTestRule<>(RecipeListActivity.class);
+    public ActivityTestRule<RecipeDetailActivity> mActivityTestRule =
+            new ActivityTestRule<RecipeDetailActivity>(RecipeDetailActivity.class) {
+                @Override
+                protected Intent getActivityIntent() {
+                    Intent intent = new Intent();
 
-    @Test
-    public void recipeDetailActivityTest() {
-        ViewInteraction recyclerView = onView(
-                allOf(withId(R.id.recipes_list_recyclerview),
-                        childAtPosition(
-                                withClassName(is("android.support.constraint.ConstraintLayout")),
-                                0)));
-        recyclerView.perform(actionOnItemAtPosition(0, click()));
+                    testRecipe = getTestRecipe();
+                    intent.putExtra(RecipeDetailActivity.EXTRA_RECIPE, testRecipe);
 
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                    return intent;
+                }
+            };
 
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.ingredientsLabelTextView), withText("Ingredients"),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
-                                        0),
-                                0),
-                        isDisplayed()));
-        textView.check(matches(isDisplayed()));
+    private Recipe getTestRecipe() {
+        ArrayList<Step> steps = new ArrayList<>();
+        steps.add(new Step(
+                0,
+                "test short desc",
+                "test long desc",
+                "test vid url",
+                "test thumbnail url"
+        ));
+        steps.add(new Step(
+                1,
+                "test short desc",
+                "test long desc",
+                "test vid url",
+                "test thumbnail url"
+        ));
 
-        ViewInteraction textView2 = onView(
-                allOf(withId(R.id.stepsLabelTextView), withText("Steps"),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
-                                        0),
-                                2),
-                        isDisplayed()));
-        textView2.check(matches(isDisplayed()));
+        ArrayList<Ingredient> ingredients = new ArrayList<>();
+        ingredients.add(new Ingredient(
+                "Test ingredient",
+                2,
+                "CUP"
+        ));
+        ingredients.add(new Ingredient(
+                "Test ingredient 2",
+                2,
+                "G"
+        ));
+
+        return new Recipe(
+                0,
+                "Test Recipe",
+                ingredients,
+                steps,
+                10,
+                null
+        );
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
+    @Test
+    public void CheckIfIngredientsAndStepsShown() {
+        onView(withId(R.id.ingredients_label_text_view))
+                .check(matches(isDisplayed()));
+        onView(withId(R.id.ingredients_recycler_view))
+                .check(matches(isDisplayed()));
+        onView(withId(R.id.ingredients_recycler_view))
+                .perform(RecyclerViewActions.scrollToPosition(0))
+                .check(matches(isDisplayed()));
 
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
+        onView(withId(R.id.recipe_detail_steps_label_text_view))
+                .check(matches(isDisplayed()));
+        onView(withId(R.id.steps_recycler_view))
+                .check(matches(isDisplayed()));
+        onView(withId(R.id.steps_recycler_view))
+                .perform(RecyclerViewActions.scrollToPosition(0))
+                .check(matches(isDisplayed()));
+    }
 
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
+    @Test
+    public void ClickOnStep_OpenStepDetail() {
+        onView(withId(R.id.steps_recycler_view))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        onView(withId(R.id.step_instruction_text_view))
+                .check(matches(withText(testRecipe.getSteps().get(0).getDescription())));
     }
 }

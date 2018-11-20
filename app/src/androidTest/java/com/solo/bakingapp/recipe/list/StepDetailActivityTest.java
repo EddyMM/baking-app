@@ -1,99 +1,65 @@
 package com.solo.bakingapp.recipe.list;
 
 
-import android.support.test.espresso.ViewInteraction;
+import android.content.Intent;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import com.solo.bakingapp.R;
+import com.solo.bakingapp.recipe.detail.StepsList;
+import com.solo.bakingapp.step.StepActivity;
+import com.solo.data.models.Step;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withParent;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class StepDetailActivityTest {
 
+    private Step testStep;
+
     @Rule
-    public ActivityTestRule<RecipeListActivity> mActivityTestRule = new ActivityTestRule<>(RecipeListActivity.class);
+    public ActivityTestRule<StepActivity> mActivityTestRule =
+            new ActivityTestRule<StepActivity>(StepActivity.class) {
+                @Override
+                protected Intent getActivityIntent() {
+                    testStep = getTestStep();
+                    ArrayList<Step> steps = new ArrayList<>();
+                    StepsList.setList(steps);
+                    steps.add(testStep);
 
-    @Test
-    public void stepDetailActivityTest() {
-        ViewInteraction recyclerView = onView(
-                allOf(withId(R.id.recipes_list_recyclerview),
-                        childAtPosition(
-                                withClassName(is("android.support.constraint.ConstraintLayout")),
-                                0)));
-        recyclerView.perform(actionOnItemAtPosition(0, click()));
+                    Intent intent = new Intent();
+                    intent.putExtra(StepActivity.RECIPE_NAME_EXTRA, "test_recipe");
+                    intent.putExtra(StepActivity.STEP_EXTRA, 0);
 
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                    return intent;
+                }
+            };
 
-        ViewInteraction recyclerView2 = onView(
-                allOf(withId(R.id.steps_recycler_view),
-                        childAtPosition(
-                                withClassName(is("android.support.constraint.ConstraintLayout")),
-                                3)));
-        recyclerView2.perform(actionOnItemAtPosition(0, click()));
 
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(8000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        ViewInteraction viewGroup = onView(
-                allOf(childAtPosition(
-                        withParent(withId(R.id.activity_step_fragment_container)),
-                        0),
-                        isDisplayed()));
-        viewGroup.check(matches(isDisplayed()));
+    private Step getTestStep() {
+        return new Step(
+                0,
+                "test short desc",
+                "test long desc",
+                "test vid url",
+                "test thumbnail url"
+        );
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
+    @Test
+    public void CheckStepDescriptionShown() {
+        onView(withId(R.id.step_instruction_text_view))
+                .check(matches(withText(testStep.getDescription())));
     }
 }

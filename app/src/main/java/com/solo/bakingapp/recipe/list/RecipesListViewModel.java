@@ -5,26 +5,36 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 
-import com.solo.data.api.RecipesApi;
-import com.solo.data.api.RecipesService;
+import com.solo.data.RecipeListRepositoryData;
+import com.solo.data.SimpleIdlingResource;
 import com.solo.data.models.Recipe;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import timber.log.Timber;
-
-public class RecipesListViewModel extends AndroidViewModel {
+public class RecipesListViewModel extends AndroidViewModel implements RecipeListRepositoryData.DelayCallback {
 
     private MutableLiveData<List<Recipe>> recipesLiveData = new MutableLiveData<>();
+    @Nullable
+    private SimpleIdlingResource simpleIdlingResource;
 
     public RecipesListViewModel(@NonNull Application application) {
         super(application);
 
+        getIdlingResource();
         fetchRecipes();
+    }
+
+    @VisibleForTesting
+    public IdlingResource getIdlingResource() {
+        if (null == simpleIdlingResource) {
+            simpleIdlingResource = new SimpleIdlingResource();
+        }
+
+        return simpleIdlingResource;
     }
 
     public LiveData<List<Recipe>> getRecipesLiveData() {
@@ -32,22 +42,12 @@ public class RecipesListViewModel extends AndroidViewModel {
     }
 
     private void fetchRecipes() {
-        RecipesService recipesService = RecipesApi.getInstance();
-        Call<List<Recipe>> recipesCall = recipesService.getRecipes();
-        recipesCall.enqueue(new Callback<List<Recipe>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Recipe>> call, @NonNull Response<List<Recipe>> response) {
-                List<Recipe> recipes = response.body();
-                Timber.d("Recipes: %s", recipes);
-                recipesLiveData.setValue(recipes);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<Recipe>> call, @NonNull Throwable t) {
-                Timber.e(t, "Problem fetching recipes");
-            }
-        });
+        RecipeListRepositoryData recipeListRepositoryData = new RecipeListRepositoryData();
+        recipeListRepositoryData.loadRecipeList(this, simpleIdlingResource);
     }
 
-
+    @Override
+    public void onDone(List<Recipe> recipes) {
+        recipesLiveData.setValue(recipes);
+    }
 }

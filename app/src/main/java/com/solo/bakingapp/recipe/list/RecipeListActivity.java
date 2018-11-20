@@ -23,6 +23,7 @@ public class RecipeListActivity extends AppCompatActivity {
 
     @BindView(R.id.recipe_list_progress_bar)
     ProgressBar recipeListProgressBar;
+    private RecipesListViewModel recipesListViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class RecipeListActivity extends AppCompatActivity {
     }
 
     private void setupViewModel() {
-        RecipesListViewModel recipesListViewModel = ViewModelProviders.of(this)
+        recipesListViewModel = ViewModelProviders.of(this)
                 .get(RecipesListViewModel.class);
 
         showProgressBar();
@@ -55,6 +56,10 @@ public class RecipeListActivity extends AppCompatActivity {
                     recipesAdapter.setRecipes(recipes);
                 }
         );
+    }
+
+    public RecipesListViewModel getRecipesListViewModel() {
+        return recipesListViewModel;
     }
 
     private void showProgressBar() {
